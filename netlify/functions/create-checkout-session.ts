@@ -56,14 +56,20 @@ export const handler: Handler = async (event) => {
   const siteUrl = process.env.SITE_URL ?? 'http://localhost:8888'
   const stripe = getStripe()
 
-  const session = await stripe.checkout.sessions.create({
-    mode: 'payment',
-    payment_method_types: ['card', 'fpx'],
-    line_items: lineItems,
-    customer_email: customer.email,
-    success_url: `${siteUrl}/?session_id={CHECKOUT_SESSION_ID}#order-success`,
-    cancel_url: `${siteUrl}/#pricing`,
-  })
+  let session
+  try {
+    session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      payment_method_types: ['card', 'fpx'],
+      line_items: lineItems,
+      customer_email: customer.email,
+      success_url: `${siteUrl}/?session_id={CHECKOUT_SESSION_ID}#order-success`,
+      cancel_url: `${siteUrl}/#pricing`,
+    })
+  } catch (err) {
+    console.error('Stripe checkout session creation failed:', err)
+    return { statusCode: 500, body: JSON.stringify({ error: 'Failed to create checkout session' }) }
+  }
 
   const { error: dbError } = await getSupabaseAdmin().from('orders').insert({
     tier_name: tierName,
