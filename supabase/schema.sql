@@ -49,3 +49,26 @@ create policy "public can view pricing images"
   on storage.objects for select
   to public
   using (bucket_id = 'pricing-images');
+
+-- Orders placed via Stripe Checkout. No anon policies: only the service-role
+-- key (used inside Netlify Functions) reads/writes this table.
+create table if not exists orders (
+  id uuid primary key default gen_random_uuid(),
+  tier_name text not null,
+  package_price numeric not null,
+  courier_fee numeric not null default 0,
+  total numeric not null,
+  currency text not null default 'MYR',
+  customer_name text not null,
+  customer_email text not null,
+  customer_phone text,
+  fulfillment_method text not null check (fulfillment_method in ('pickup', 'courier')),
+  region text check (region in ('peninsular', 'east_malaysia')),
+  shipping_address jsonb,
+  status text not null default 'pending' check (status in ('pending', 'paid', 'failed')),
+  stripe_session_id text unique,
+  stripe_payment_intent_id text,
+  created_at timestamptz not null default now()
+);
+
+alter table orders enable row level security;
