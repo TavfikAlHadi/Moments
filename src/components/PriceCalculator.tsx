@@ -30,10 +30,10 @@ const FALLBACK_TIERS = [
 ]
 
 interface PriceCalculatorProps {
-  onSelectQuote: (text: string) => void
+  onOrder: (tier: { name: string; price: number }) => void
 }
 
-export default function PriceCalculator({ onSelectQuote }: PriceCalculatorProps) {
+export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
   const [photos, setPhotos] = useState(150)
   const [restore, setRestore] = useState(true)
   const [TIERS, setTiers] = useState(FALLBACK_TIERS)
@@ -128,17 +128,13 @@ export default function PriceCalculator({ onSelectQuote }: PriceCalculatorProps)
             <p className="mt-2 text-sm text-ink/50">
               includes handling, high-res scanning &amp; 30-day cloud backup
             </p>
-            <a
-              href="#contact"
-              onClick={() =>
-                onSelectQuote(
-                  `Custom estimate: ${photos} photos${restore ? ' with restoration' : ''} — approx. RM${estimate.toFixed(2)}. Closest package: ${suggestedTier.name}.`
-                )
-              }
+            <button
+              type="button"
+              onClick={() => onOrder({ name: suggestedTier.name, price: suggestedTier.price })}
               className="mt-8 inline-flex items-center justify-center rounded-full bg-terracotta text-cream px-7 py-3.5 font-semibold hover:bg-terracotta-dark transition-colors w-full"
             >
-              Lock In This Quote
-            </a>
+              Order This Package
+            </button>
           </motion.div>
         </div>
 
@@ -154,10 +150,7 @@ export default function PriceCalculator({ onSelectQuote }: PriceCalculatorProps)
                 transition={{ duration: 0.5, delay: i * 0.08 }}
                 role="button"
                 tabIndex={0}
-                onClick={() => {
-                  onSelectQuote(`${t.name} package: up to ${t.photos} photos — RM${t.price.toFixed(2)}.`)
-                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
-                }}
+                onClick={() => onOrder({ name: t.name, price: t.price })}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
                 }}

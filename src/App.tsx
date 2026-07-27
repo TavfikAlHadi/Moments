@@ -10,9 +10,11 @@ import FAQ from './components/FAQ'
 import VideoTeaser from './components/VideoTeaser'
 import LeadForm from './components/LeadForm'
 import Footer from './components/Footer'
+import OrderForm from './components/OrderForm'
 
 export default function App() {
   const [quotePrefill, setQuotePrefill] = useState('')
+  const [orderTier, setOrderTier] = useState<{ name: string; price: number } | null>(null)
 
   return (
     <div className="min-h-screen">
@@ -22,13 +24,14 @@ export default function App() {
         <NeverLost />
         <HowItWorks />
         <UseCases />
-        <PriceCalculator onSelectQuote={setQuotePrefill} />
+        <PriceCalculator onOrder={setOrderTier} />
         <Testimonials />
         <FAQ />
         <VideoTeaser />
         <LeadForm prefill={quotePrefill} />
       </main>
       <Footer />
+      <OrderForm tier={orderTier} onClose={() => setOrderTier(null)} />
     </div>
   )
 }
