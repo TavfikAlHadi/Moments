@@ -1,11 +1,7 @@
 import { motion } from 'framer-motion'
 import BeforeAfterSlider from './BeforeAfterSlider'
 
-interface HeroProps {
-  onGetQuote: () => void
-}
-
-export default function Hero({ onGetQuote }: HeroProps) {
+export default function Hero() {
   return (
     <section id="top" className="grain relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-28">
       <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-gold/20 blur-3xl" />
@@ -29,11 +25,10 @@ export default function Hero({ onGetQuote }: HeroProps) {
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <a
-              href="#contact"
-              onClick={onGetQuote}
+              href="#pricing"
               className="inline-flex items-center rounded-full bg-terracotta text-cream px-7 py-3.5 font-semibold hover:bg-terracotta-dark transition-colors"
             >
-              Get Your Free Quote
+              Order Now
             </a>
             <a
               href="#how-it-works"

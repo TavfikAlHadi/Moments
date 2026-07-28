@@ -14,7 +14,6 @@ import OrderForm from './components/OrderForm'
 import OrderSuccess from './components/OrderSuccess'
 
 export default function App() {
-  const [quotePrefill, setQuotePrefill] = useState('')
   const [orderTier, setOrderTier] = useState<{ name: string; price: number } | null>(null)
 
   if (new URLSearchParams(window.location.search).has('session_id')) {
@@ -23,9 +22,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <Nav onGetQuote={() => setQuotePrefill('')} />
+      <Nav />
       <main>
-        <Hero onGetQuote={() => setQuotePrefill('')} />
+        <Hero />
         <NeverLost />
         <HowItWorks />
         <UseCases />
@@ -33,7 +32,7 @@ export default function App() {
         <Testimonials />
         <FAQ />
         <VideoTeaser />
-        <LeadForm prefill={quotePrefill} />
+        <LeadForm prefill="" />
       </main>
       <Footer />
       <OrderForm tier={orderTier} onClose={() => setOrderTier(null)} />

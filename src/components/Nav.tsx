@@ -10,11 +10,7 @@ const links = [
   { href: '#contact', label: 'Contact' },
 ]
 
-interface NavProps {
-  onGetQuote: () => void
-}
-
-export default function Nav({ onGetQuote }: NavProps) {
+export default function Nav() {
   const [open, setOpen] = useState(false)
 
   return (
@@ -36,11 +32,10 @@ export default function Nav({ onGetQuote }: NavProps) {
           <ThemeToggle />
 
           <a
-            href="#contact"
-            onClick={onGetQuote}
+            href="#pricing"
             className="hidden md:inline-flex items-center rounded-full bg-terracotta text-cream px-5 py-2.5 text-sm font-semibold hover:bg-terracotta-dark transition-colors"
           >
-            Get Free Quote
+            Order Now
           </a>
 
           <button
@@ -71,14 +66,11 @@ export default function Nav({ onGetQuote }: NavProps) {
             </a>
           ))}
           <a
-            href="#contact"
-            onClick={() => {
-              setOpen(false)
-              onGetQuote()
-            }}
+            href="#pricing"
+            onClick={() => setOpen(false)}
             className="mt-2 inline-flex items-center justify-center rounded-full bg-terracotta text-cream px-5 py-2.5 text-sm font-semibold"
           >
-            Get Free Quote
+            Order Now
           </a>
         </motion.nav>
       )}

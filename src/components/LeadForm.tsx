@@ -59,7 +59,7 @@ export default function LeadForm({ prefill }: LeadFormProps) {
     <section id="contact" className="py-24 bg-ink text-cream">
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-semibold">Get Your Free Quote</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold">Have Questions? Ask Us</h2>
           <p className="mt-3 text-cream/60">
             Tell us a little about your collection and we'll get back to you within one business day.
           </p>
@@ -113,7 +113,7 @@ export default function LeadForm({ prefill }: LeadFormProps) {
               disabled={status === 'submitting'}
               className="sm:col-span-2 inline-flex items-center justify-center rounded-full bg-terracotta text-cream px-7 py-3.5 font-semibold hover:bg-terracotta-dark transition-colors disabled:opacity-50"
             >
-              {status === 'submitting' ? 'Sending…' : 'Request My Free Quote'}
+              {status === 'submitting' ? 'Sending…' : 'Send Message'}
             </button>
           </form>
         )}
