@@ -30,7 +30,7 @@ const FALLBACK_TIERS = [
 ]
 
 interface PriceCalculatorProps {
-  onOrder: (tier: { name: string; price: number }) => void
+  onOrder: (tier: { name: string; price: number; notes?: string }) => void
 }
 
 export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
@@ -130,10 +130,16 @@ export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
             </p>
             <button
               type="button"
-              onClick={() => onOrder({ name: suggestedTier.name, price: suggestedTier.price })}
+              onClick={() =>
+                onOrder({
+                  name: suggestedTier.name,
+                  price: suggestedTier.price,
+                  notes: `${photos} photos${restore ? ' with restoration' : ''} — customer's own estimate was RM${estimate.toFixed(2)}`,
+                })
+              }
               className="mt-8 inline-flex items-center justify-center rounded-full bg-terracotta text-cream px-7 py-3.5 font-semibold hover:bg-terracotta-dark transition-colors w-full"
             >
-              Order This Package
+              Order {suggestedTier.name} — RM{suggestedTier.price.toFixed(2)}
             </button>
           </motion.div>
         </div>

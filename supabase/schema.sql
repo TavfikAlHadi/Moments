@@ -71,4 +71,7 @@ create table if not exists orders (
   created_at timestamptz not null default now()
 );
 
+-- Free-text notes captured at order time (e.g. the customer's own slider estimate).
+alter table orders add column if not exists notes text;
+
 alter table orders enable row level security;

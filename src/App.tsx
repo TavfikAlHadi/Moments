@@ -14,7 +14,7 @@ import OrderForm from './components/OrderForm'
 import OrderSuccess from './components/OrderSuccess'
 
 export default function App() {
-  const [orderTier, setOrderTier] = useState<{ name: string; price: number } | null>(null)
+  const [orderTier, setOrderTier] = useState<{ name: string; price: number; notes?: string } | null>(null)
 
   if (new URLSearchParams(window.location.search).has('session_id')) {
     return <OrderSuccess />
@@ -35,7 +35,7 @@ export default function App() {
         <LeadForm prefill="" />
       </main>
       <Footer />
-      <OrderForm tier={orderTier} onClose={() => setOrderTier(null)} />
+      <OrderForm key={orderTier?.name ?? 'closed'} tier={orderTier} onClose={() => setOrderTier(null)} />
     </div>
   )
 }

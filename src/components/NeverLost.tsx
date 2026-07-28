@@ -27,7 +27,7 @@ export default function NeverLost() {
           </p>
 
           <a
-            href="#contact"
+            href="#pricing"
             className="mt-8 inline-flex items-center rounded-full bg-terracotta text-cream px-7 py-3.5 font-semibold hover:bg-terracotta-dark transition-colors"
           >
             Protect Your Memories

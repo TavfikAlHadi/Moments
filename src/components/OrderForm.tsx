@@ -5,7 +5,7 @@ import { X } from 'lucide-react'
 const COURIER_FEE = { peninsular: 15, east_malaysia: 25 } as const
 
 interface OrderFormProps {
-  tier: { name: string; price: number } | null
+  tier: { name: string; price: number; notes?: string } | null
   onClose: () => void
 }
 
@@ -38,7 +38,7 @@ export default function OrderForm({ tier, onClose }: OrderFormProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tierName: tier!.name,
-          tierPrice: tier!.price,
+          notes: tier!.notes,
           fulfillment,
           region: fulfillment === 'courier' ? region : undefined,
           customer: { name, email, phone },
@@ -97,7 +97,8 @@ export default function OrderForm({ tier, onClose }: OrderFormProps) {
               className="w-full rounded-xl border border-ink/15 px-4 py-3 outline-none focus:border-terracotta"
             />
             <input
-              placeholder="Phone number"
+              required={fulfillment === 'courier'}
+              placeholder={fulfillment === 'courier' ? 'Phone number' : 'Phone number (optional)'}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full rounded-xl border border-ink/15 px-4 py-3 outline-none focus:border-terracotta"

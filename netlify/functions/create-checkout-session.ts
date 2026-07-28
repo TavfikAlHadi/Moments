@@ -13,9 +13,9 @@ export const handler: Handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }
   }
 
-  const { tierName, tierPrice, fulfillment, region, customer, shippingAddress } = body
+  const { tierName, fulfillment, region, customer, shippingAddress, notes } = body
 
-  if (!tierName || typeof tierPrice !== 'number' || tierPrice <= 0) {
+  if (typeof tierName !== 'string' || tierName.trim() === '') {
     return { statusCode: 400, body: JSON.stringify({ error: 'Missing or invalid tier' }) }
   }
   if (fulfillment !== 'pickup' && fulfillment !== 'courier') {
@@ -27,6 +27,34 @@ export const handler: Handler = async (event) => {
   if (!customer?.name || !customer?.email) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Missing customer name or email' }) }
   }
+  if (fulfillment === 'courier') {
+    const nonEmpty = (v: unknown) => typeof v === 'string' && v.trim() !== ''
+    if (
+      !shippingAddress ||
+      !nonEmpty(shippingAddress.line1) ||
+      !nonEmpty(shippingAddress.city) ||
+      !nonEmpty(shippingAddress.state) ||
+      !nonEmpty(shippingAddress.postcode)
+    ) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Missing shipping address' }) }
+    }
+    if (!nonEmpty(customer.phone)) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Phone number required for courier delivery' }) }
+    }
+  }
+
+  // Price is always looked up server-side — never trust a client-sent amount.
+  const { data: tier, error: tierError } = await getSupabaseAdmin()
+    .from('pricing_tiers')
+    .select('name, price')
+    .eq('name', tierName)
+    .single()
+
+  if (tierError || !tier) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Unknown package tier' }) }
+  }
+
+  const tierPrice = Number(tier.price)
 
   // Courier fee is always computed server-side — never trust a client-sent amount.
   const courierFee = fulfillment === 'courier' ? COURIER_FEE[region as 'peninsular' | 'east_malaysia'] : 0
@@ -84,6 +112,7 @@ export const handler: Handler = async (event) => {
     shipping_address: fulfillment === 'courier' ? shippingAddress : null,
     status: 'pending',
     stripe_session_id: session.id,
+    notes: typeof notes === 'string' && notes.trim() !== '' ? notes : null,
   })
 
   if (dbError) {
