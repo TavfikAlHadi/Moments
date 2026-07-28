@@ -11,10 +11,15 @@ import VideoTeaser from './components/VideoTeaser'
 import LeadForm from './components/LeadForm'
 import Footer from './components/Footer'
 import OrderForm from './components/OrderForm'
+import OrderSuccess from './components/OrderSuccess'
 
 export default function App() {
   const [quotePrefill, setQuotePrefill] = useState('')
   const [orderTier, setOrderTier] = useState<{ name: string; price: number } | null>(null)
+
+  if (new URLSearchParams(window.location.search).has('session_id')) {
+    return <OrderSuccess />
+  }
 
   return (
     <div className="min-h-screen">
