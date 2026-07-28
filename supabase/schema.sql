@@ -28,6 +28,14 @@ create table if not exists pricing_tiers (
 
 alter table pricing_tiers enable row level security;
 
+-- Unique name so "on conflict do nothing" below actually has something to
+-- target, and so the price lookup in create-checkout-session.ts (.single())
+-- can't break on duplicate rows if this file is re-run.
+do $$ begin
+  alter table pricing_tiers add constraint pricing_tiers_name_key unique (name);
+exception when duplicate_object then null;
+end $$;
+
 -- Public site reads tiers; only edit via Studio (which uses your own login, not anon).
 create policy "anon can read pricing tiers"
   on pricing_tiers for select

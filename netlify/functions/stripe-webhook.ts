@@ -20,7 +20,8 @@ export const handler: Handler = async (event) => {
   if (
     stripeEvent.type === 'checkout.session.completed' ||
     stripeEvent.type === 'checkout.session.expired' ||
-    stripeEvent.type === 'checkout.session.async_payment_failed'
+    stripeEvent.type === 'checkout.session.async_payment_failed' ||
+    stripeEvent.type === 'checkout.session.async_payment_succeeded'
   ) {
     const session = stripeEvent.data.object as {
       id: string
@@ -28,9 +29,11 @@ export const handler: Handler = async (event) => {
       payment_status?: string
     }
 
-    const paid = stripeEvent.type === 'checkout.session.completed' && session.payment_status === 'paid'
+    const paid =
+      stripeEvent.type === 'checkout.session.async_payment_succeeded' ||
+      (stripeEvent.type === 'checkout.session.completed' && session.payment_status === 'paid')
     const update =
-      stripeEvent.type === 'checkout.session.completed'
+      stripeEvent.type === 'checkout.session.completed' || stripeEvent.type === 'checkout.session.async_payment_succeeded'
         ? { status: paid ? 'paid' : 'pending', stripe_payment_intent_id: session.payment_intent }
         : { status: 'failed' }
 
