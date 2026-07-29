@@ -5,7 +5,12 @@ import { X } from 'lucide-react'
 const COURIER_FEE = { peninsular: 15, east_malaysia: 25 } as const
 
 interface OrderFormProps {
-  tier: { name: string; price: number; notes?: string } | null
+  tier: {
+    name: string
+    price: number
+    notes?: string
+    custom?: { photos: number; restore: boolean }
+  } | null
   onClose: () => void
 }
 
@@ -37,7 +42,8 @@ export default function OrderForm({ tier, onClose }: OrderFormProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          tierName: tier!.name,
+          tierName: tier!.custom ? undefined : tier!.name,
+          custom: tier!.custom,
           notes: tier!.notes,
           fulfillment,
           region: fulfillment === 'courier' ? region : undefined,
@@ -74,6 +80,7 @@ export default function OrderForm({ tier, onClose }: OrderFormProps) {
             <div>
               <h3 className="text-2xl font-semibold">Order: {tier.name}</h3>
               <p className="text-ink/60 text-sm mt-1">RM{tier.price.toFixed(2)} package</p>
+              {tier.notes && <p className="text-ink/60 text-sm mt-1">{tier.notes}</p>}
             </div>
             <button onClick={onClose} aria-label="Close" className="text-ink/50 hover:text-ink">
               <X size={22} />
@@ -97,8 +104,8 @@ export default function OrderForm({ tier, onClose }: OrderFormProps) {
               className="w-full rounded-xl border border-ink/15 px-4 py-3 outline-none focus:border-terracotta"
             />
             <input
-              required={fulfillment === 'courier'}
-              placeholder={fulfillment === 'courier' ? 'Phone number' : 'Phone number (optional)'}
+              required
+              placeholder="Phone number"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full rounded-xl border border-ink/15 px-4 py-3 outline-none focus:border-terracotta"

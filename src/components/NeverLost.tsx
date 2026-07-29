@@ -42,7 +42,7 @@ export default function NeverLost() {
           className="aspect-4/3 overflow-hidden rounded-3xl shadow-xl"
         >
           <img
-            src="https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?w=900&q=75"
+            src="/old folk with young photo.jpg"
             alt="Holding a restored family photo"
             className="h-full w-full object-cover"
           />

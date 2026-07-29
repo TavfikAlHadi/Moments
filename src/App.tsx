@@ -14,7 +14,12 @@ import OrderForm from './components/OrderForm'
 import OrderSuccess from './components/OrderSuccess'
 
 export default function App() {
-  const [orderTier, setOrderTier] = useState<{ name: string; price: number; notes?: string } | null>(null)
+  const [orderTier, setOrderTier] = useState<{
+    name: string
+    price: number
+    notes?: string
+    custom?: { photos: number; restore: boolean }
+  } | null>(null)
 
   if (new URLSearchParams(window.location.search).has('session_id')) {
     return <OrderSuccess />

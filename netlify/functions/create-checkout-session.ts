@@ -1,5 +1,5 @@
 import type { Handler } from '@netlify/functions'
-import { getStripe, getSupabaseAdmin, COURIER_FEE } from './_lib'
+import { getStripe, getSupabaseAdmin, COURIER_FEE, computeCustomEstimate } from './_lib'
 
 export const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -13,9 +13,17 @@ export const handler: Handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }
   }
 
-  const { tierName, fulfillment, region, customer, shippingAddress, notes } = body
+  const { tierName, custom, fulfillment, region, customer, shippingAddress, notes } = body
 
-  if (typeof tierName !== 'string' || tierName.trim() === '') {
+  const isCustom = custom != null
+  if (isCustom) {
+    if (typeof custom.photos !== 'number' || !Number.isFinite(custom.photos) || custom.photos <= 0) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Invalid photo count' }) }
+    }
+    if (typeof custom.restore !== 'boolean') {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Invalid restoration flag' }) }
+    }
+  } else if (typeof tierName !== 'string' || tierName.trim() === '') {
     return { statusCode: 400, body: JSON.stringify({ error: 'Missing or invalid tier' }) }
   }
   if (fulfillment !== 'pickup' && fulfillment !== 'courier') {
@@ -43,18 +51,29 @@ export const handler: Handler = async (event) => {
     }
   }
 
-  // Price is always looked up server-side — never trust a client-sent amount.
-  const { data: tier, error: tierError } = await getSupabaseAdmin()
-    .from('pricing_tiers')
-    .select('name, price')
-    .eq('name', tierName)
-    .single()
+  // Price is always computed/looked up server-side — never trust a client-sent amount.
+  let tierPrice: number
+  let orderTierName: string
+  let productName: string
+  if (isCustom) {
+    tierPrice = await computeCustomEstimate(custom.photos, custom.restore)
+    orderTierName = 'Custom Estimate'
+    productName = `Custom digitisation — ${custom.photos} photos${custom.restore ? ' + restoration' : ''}`
+  } else {
+    const { data: tier, error: tierError } = await getSupabaseAdmin()
+      .from('pricing_tiers')
+      .select('name, price')
+      .eq('name', tierName)
+      .single()
 
-  if (tierError || !tier) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Unknown package tier' }) }
+    if (tierError || !tier) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Unknown package tier' }) }
+    }
+
+    tierPrice = Number(tier.price)
+    orderTierName = tierName
+    productName = `${tierName} package`
   }
-
-  const tierPrice = Number(tier.price)
 
   // Courier fee is always computed server-side — never trust a client-sent amount.
   const courierFee = fulfillment === 'courier' ? COURIER_FEE[region as 'peninsular' | 'east_malaysia'] : 0
@@ -64,7 +83,7 @@ export const handler: Handler = async (event) => {
     {
       price_data: {
         currency: 'myr',
-        product_data: { name: `${tierName} package` },
+        product_data: { name: productName },
         unit_amount: Math.round(tierPrice * 100),
       },
       quantity: 1,
@@ -99,8 +118,12 @@ export const handler: Handler = async (event) => {
     return { statusCode: 500, body: JSON.stringify({ error: 'Failed to create checkout session' }) }
   }
 
+  const customNotes = isCustom
+    ? `Custom estimate: ${custom.photos} photos${custom.restore ? ' with restoration' : ''}`
+    : null
+
   const { error: dbError } = await getSupabaseAdmin().from('orders').insert({
-    tier_name: tierName,
+    tier_name: orderTierName,
     package_price: tierPrice,
     courier_fee: courierFee,
     total,
@@ -112,7 +135,7 @@ export const handler: Handler = async (event) => {
     shipping_address: fulfillment === 'courier' ? shippingAddress : null,
     status: 'pending',
     stripe_session_id: session.id,
-    notes: typeof notes === 'string' && notes.trim() !== '' ? notes : null,
+    notes: customNotes ?? (typeof notes === 'string' && notes.trim() !== '' ? notes : null),
   })
 
   if (dbError) {

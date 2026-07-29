@@ -4,17 +4,17 @@ const cases = [
   {
     title: 'Preserve & Relive',
     body: 'Perfect for anyone who wants to preserve and relive their family memories in stunning quality.',
-    img: 'https://images.unsplash.com/photo-1476234251651-f353703a034d?w=700&q=70',
+    img: '/Preserve & Relive.jpg',
   },
   {
     title: 'Restore & Enhance',
     body: 'Restore old black-and-white portraits, adding warmth and colour back into your photo albums.',
-    img: 'https://images.unsplash.com/photo-1495954380655-01e28a790aa7?w=700&q=70',
+    img: '/Restore & Enhance.png',
   },
   {
     title: 'Archive & Protect',
     body: 'Businesses and museums can restore vintage photography and archival footage to professional standard.',
-    img: 'https://images.unsplash.com/photo-1502085671122-2d218cd434e6?w=700&q=70',
+    img: '/Archive & Protect.jpeg',
   },
 ]
 

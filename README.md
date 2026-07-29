@@ -18,8 +18,9 @@ npm run dev
 
 ## Supabase setup
 1. Create a project at supabase.com.
-2. Run `supabase/schema.sql` in the SQL editor — creates the `leads` table with
-   row-level security so the public anon key can only INSERT, never read.
+2. Run `supabase db push` (needs `supabase link --project-ref <ref>` first) to apply
+   `supabase/migrations/`, or paste `supabase/schema.sql` into the SQL editor manually.
+   Creates `leads`, `pricing_tiers`, `orders`, `profiles` with row-level security.
 3. Copy the project URL and anon key into `.env` (or Netlify env vars) as
    `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`.
 

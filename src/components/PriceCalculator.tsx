@@ -2,9 +2,33 @@ import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { supabase, supabaseEnabled } from '../lib/supabase'
 
-const PHOTO_RATE = 0.85 // RM per photo, scanning
-const RESTORE_RATE = 0.65 // RM per photo, restoration add-on
 const BASE_FEE = 15 // RM handling/shipping
+const NO_RESTORE_DISCOUNT = 0.25 // fraction off the package-tallied price when restoration is unchecked
+
+// Piecewise-linear interpolation across actual pricing_tiers rows, so the
+// estimate tallies exactly with the package price at each tier's photo count
+// instead of drifting off a flat per-photo rate. Mirrors _lib.ts on the server.
+function interpolatePrice(photos: number, tiers: { photos: number; price: number }[]): number {
+  const sorted = [...tiers].sort((a, b) => a.photos - b.photos)
+  if (sorted.length === 0) return BASE_FEE
+
+  const first = sorted[0]
+  if (photos <= first.photos) {
+    return BASE_FEE + (photos / first.photos) * (first.price - BASE_FEE)
+  }
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const a = sorted[i]
+    const b = sorted[i + 1]
+    if (photos <= b.photos) {
+      const t = (photos - a.photos) / (b.photos - a.photos)
+      return a.price + t * (b.price - a.price)
+    }
+  }
+  const a = sorted[sorted.length - 2] ?? { photos: 0, price: BASE_FEE }
+  const b = sorted[sorted.length - 1]
+  const slope = (b.price - a.price) / (b.photos - a.photos)
+  return b.price + slope * (photos - b.photos)
+}
 
 // Fallback used until (or unless) `pricing_tiers` loads from Supabase — keeps
 // the calculator working even if the table is empty or env vars aren't set.
@@ -13,24 +37,29 @@ const FALLBACK_TIERS = [
     name: 'Basic',
     price: 49.9,
     photos: 20,
-    img: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500&q=70',
+    img: '/basic.jpg',
   },
   {
     name: 'Medium',
     price: 159.9,
     photos: 250,
-    img: 'https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?w=500&q=70',
+    img: '/medium.jpg',
   },
   {
     name: 'Advance',
     price: 269.9,
     photos: 400,
-    img: 'https://images.unsplash.com/photo-1519638831568-d9897f54ed69?w=500&q=70',
+    img: '/advance.jpg',
   },
 ]
 
 interface PriceCalculatorProps {
-  onOrder: (tier: { name: string; price: number; notes?: string }) => void
+  onOrder: (tier: {
+    name: string
+    price: number
+    notes?: string
+    custom?: { photos: number; restore: boolean }
+  }) => void
 }
 
 export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
@@ -53,9 +82,10 @@ export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
   }, [])
 
   const estimate = useMemo(() => {
-    const raw = BASE_FEE + photos * PHOTO_RATE + (restore ? photos * RESTORE_RATE : 0)
-    return Math.round(raw * 100) / 100
-  }, [photos, restore])
+    const raw = interpolatePrice(photos, TIERS)
+    const withDiscount = restore ? raw : raw * (1 - NO_RESTORE_DISCOUNT)
+    return Math.round(withDiscount * 100) / 100
+  }, [photos, restore, TIERS])
 
   const suggestedTier = useMemo(() => {
     return TIERS.find((t) => photos <= t.photos) ?? TIERS[TIERS.length - 1]
@@ -132,14 +162,15 @@ export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
               type="button"
               onClick={() =>
                 onOrder({
-                  name: suggestedTier.name,
-                  price: suggestedTier.price,
-                  notes: `${photos} photos${restore ? ' with restoration' : ''} — customer's own estimate was RM${estimate.toFixed(2)}`,
+                  name: 'Custom Estimate',
+                  price: estimate,
+                  notes: `${photos} photos${restore ? ' with restoration' : ''}`,
+                  custom: { photos, restore },
                 })
               }
               className="mt-8 inline-flex items-center justify-center rounded-full bg-terracotta text-cream px-7 py-3.5 font-semibold hover:bg-terracotta-dark transition-colors w-full"
             >
-              Order {suggestedTier.name} — RM{suggestedTier.price.toFixed(2)}
+              Order this estimate — RM{estimate.toFixed(2)}
             </button>
           </motion.div>
         </div>
