@@ -6,7 +6,12 @@ import { supabase, supabaseEnabled } from '../lib/supabase'
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
 const WHATSAPP_NUMBER = '601164947110' // 011-64947110, Malaysia country code
-const QUOTE_EMAIL = 'contact@innotribesolutions.com'
+
+function encodeFormData(data: Record<string, string>) {
+  return Object.entries(data)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&')
+}
 
 interface LeadFormProps {
   prefill: string
@@ -48,9 +53,14 @@ export default function LeadForm({ prefill }: LeadFormProps) {
       .join('\n')
 
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`, '_blank')
-    window.location.href = `mailto:${QUOTE_EMAIL}?subject=${encodeURIComponent(
-      'New Quote Request - ' + lead.name
-    )}&body=${encodeURIComponent(summary)}`
+
+    // Fire-and-forget: Netlify Forms submission gives the team an email copy.
+    // Never blocks the WhatsApp handoff above, which is the primary path.
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: encodeFormData({ 'form-name': 'quote-request', ...lead }),
+    }).catch(() => {})
 
     setStatus('success')
   }
@@ -113,7 +123,7 @@ export default function LeadForm({ prefill }: LeadFormProps) {
               disabled={status === 'submitting'}
               className="sm:col-span-2 inline-flex items-center justify-center rounded-full bg-terracotta text-cream px-7 py-3.5 font-semibold hover:bg-terracotta-dark transition-colors disabled:opacity-50"
             >
-              {status === 'submitting' ? 'Sending…' : 'Send Message'}
+              {status === 'submitting' ? 'Sending…' : 'Send WhatsApp'}
             </button>
           </form>
         )}

@@ -23,6 +23,13 @@
     />
   </head>
   <body>
+    <!-- Static form so Netlify's build-time bot can detect and register it for Forms + email notifications. Submitted via fetch from LeadForm.tsx, never rendered. -->
+    <form name="quote-request" data-netlify="true" hidden>
+      <input type="text" name="name" />
+      <input type="tel" name="phone" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+    </form>
     <script>
       // Set theme before React mounts to avoid a light/dark flash on load.
       (function () {
