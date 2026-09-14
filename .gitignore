@@ -29,3 +29,4 @@ dist-ssr
 # Claude Code worktrees and agent scratch workspace
 .claude/worktrees/
 .superpowers/
+supabase/.temp/

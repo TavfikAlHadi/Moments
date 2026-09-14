@@ -16,6 +16,16 @@ const cases = [
     body: 'Businesses and museums can restore vintage photography and archival footage to professional standard.',
     img: '/Archive & Protect.jpeg',
   },
+  {
+    title: 'Give the Gift of Memory',
+    body: 'Restore a photograph for a birthday, anniversary or reunion — a gift no one else can give.',
+    img: '/Gift.jpg',
+  },
+  {
+    title: 'Remember Someone You Lost',
+    body: 'Bring back the one irreplaceable photograph of someone you miss.',
+    img: '/Remember.jpg',
+  },
 ]
 
 export default function UseCases() {

@@ -14,7 +14,7 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
           <span className="inline-flex items-center rounded-full bg-terracotta/10 text-terracotta px-4 py-1.5 text-sm font-semibold">
-            Photo Digitisation &amp; Restoration
+            Moments — Photo Restoration &amp; Digitisation
           </span>
           <h1 className="mt-6 text-4xl md:text-6xl font-semibold leading-[1.05] tracking-tight text-ink dark:text-cream">
             Your memories,<br />made to last.

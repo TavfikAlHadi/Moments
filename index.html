@@ -4,12 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Moments | Photo Digitisation and Restoration in Malaysia</title>
+    <title>Moments — Photo Restoration &amp; Digitisation in Malaysia</title>
     <meta
       name="description"
       content="Preserve your family's photos forever. Professional digitisation, restoration, and secure cloud storage in Kuala Lumpur. Get your free quote today."
     />
-    <meta property="og:title" content="Moments | Photo Digitisation and Restoration" />
+    <!-- TODO: update once off the Netlify staging domain (see moments-website-fixes.md / feedback item 15) -->
+    <link rel="canonical" href="https://momentsbyinnotribe.netlify.app/" />
+    <meta property="og:title" content="Moments — Photo Restoration &amp; Digitisation" />
     <meta
       property="og:description"
       content="Preserve your family's photos forever. Professional digitisation and restoration in Kuala Lumpur."
@@ -21,6 +23,102 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <!--
+      ponytail: this is a client-rendered SPA, so crawlers get this JSON-LD but not the
+      rendered page copy. Full fix is prerendering/SSR (Vite SSG, Next, etc.) — bigger
+      job, not done here. This stopgap at least gives search engines structured data.
+      Keep the FAQ entries here in sync with src/components/FAQ.tsx.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "name": "Moments",
+            "alternateName": "Moments by Innotribe Solutions",
+            "description": "Photo digitisation and restoration service in Kuala Lumpur, Malaysia.",
+            "url": "https://momentsbyinnotribe.netlify.app/",
+            "telephone": "+603-2201-7110",
+            "email": "contact@innotribesolutions.com",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "No.21-7 Boulevard Office, Mid Valley City",
+              "addressLocality": "Kuala Lumpur",
+              "postalCode": "51200",
+              "addressCountry": "MY"
+            },
+            "areaServed": "MY",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Photo Digitisation & Restoration",
+              "itemListElement": [
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Photo Digitisation" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Photo Restoration" } }
+              ]
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Will my photos be safe?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Every item is barcoded and tracked from the moment it arrives, scanned by trained technicians, and returned to you along with your digital files. Physical originals are never discarded without your confirmation."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What formats can you digitise?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Photos and photo albums, negatives, and slides." }
+              },
+              {
+                "@type": "Question",
+                "name": "How long does it take?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Around 3 weeks from the time we receive your box and you approve your order, to the time your files are ready online."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do I receive my digital files?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Through a secure download link, plus 30 days of free storage on Moments Cloud so you can stream from any device."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What if I have more than 400 photos?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Contact us for a custom quote — we handle larger collections and business/archival projects too."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is there a guarantee if something arrives damaged?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes — contact our support team within 7 days of delivery and we'll make it right."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do you digitise VHS tapes or home videos?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Not yet — we're photo-only for now while we source professional tape-transfer equipment. Join the waitlist on the page and we'll notify you the moment video digitisation launches."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <!-- Static form so Netlify's build-time bot can detect and register it for Forms + email notifications. Submitted via fetch from LeadForm.tsx, never rendered. -->

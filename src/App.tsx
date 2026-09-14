@@ -4,6 +4,8 @@ import Hero from './components/Hero'
 import NeverLost from './components/NeverLost'
 import HowItWorks from './components/HowItWorks'
 import UseCases from './components/UseCases'
+import TrustSection from './components/TrustSection'
+import StickyCTA from './components/StickyCTA'
 import PriceCalculator from './components/PriceCalculator'
 import Testimonials from './components/Testimonials'
 import FAQ from './components/FAQ'
@@ -26,13 +28,14 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-14 md:pb-0">
       <Nav />
       <main>
         <Hero />
         <NeverLost />
         <HowItWorks />
         <UseCases />
+        <TrustSection />
         <PriceCalculator onOrder={setOrderTier} />
         <Testimonials />
         <FAQ />
@@ -41,6 +44,7 @@ export default function App() {
       </main>
       <Footer />
       <OrderForm key={orderTier?.name ?? 'closed'} tier={orderTier} onClose={() => setOrderTier(null)} />
+      <StickyCTA />
     </div>
   )
 }

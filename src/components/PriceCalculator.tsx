@@ -140,6 +140,9 @@ export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
               Estimate only — final pricing confirmed after we inspect your order.
               Closest package: <span className="text-gold font-semibold">{suggestedTier.name}</span>.
             </p>
+            <p className="text-xs text-cream/50">
+              We restore the photograph without rewriting the memory — no invented faces, no AI guesswork.
+            </p>
           </div>
 
           <motion.div
