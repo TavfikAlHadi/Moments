@@ -59,7 +59,16 @@ export default function Footer() {
       </div>
 
       <p className="mt-10 text-center text-xs text-cream/30">
-        © {new Date().getFullYear()} Moments by Innotribe Solutions. All rights reserved.
+        © {new Date().getFullYear()} Moments by{' '}
+        <a
+          href="https://www.innotribesolutions.com"
+          target="_blank"
+          rel="noreferrer"
+          className="hover:text-cream transition-colors"
+        >
+          Innotribe Solutions
+        </a>
+        . All rights reserved.
       </p>
     </footer>
   )
