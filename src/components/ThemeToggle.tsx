@@ -1,23 +1,29 @@
 import { useState } from 'react'
-import { Moon, Sun } from 'lucide-react'
-import { getTheme, setTheme } from '../lib/theme'
+import { Monitor, Moon, Sun } from 'lucide-react'
+import { getThemePref, setThemePref, type ThemePref } from '../lib/theme'
+
+const NEXT: Record<ThemePref, ThemePref> = { system: 'light', light: 'dark', dark: 'system' }
+const ICON = { system: Monitor, light: Sun, dark: Moon }
+const LABEL = { system: 'System theme', light: 'Light theme', dark: 'Dark theme' }
 
 export default function ThemeToggle() {
-  const [theme, setLocalTheme] = useState(getTheme)
+  const [pref, setPref] = useState(getThemePref)
+  const Icon = ICON[pref]
 
-  function toggle() {
-    const next = theme === 'dark' ? 'light' : 'dark'
-    setTheme(next)
-    setLocalTheme(next)
+  function cycle() {
+    const next = NEXT[pref]
+    setThemePref(next)
+    setPref(next)
   }
 
   return (
     <button
-      onClick={toggle}
-      aria-label="Toggle dark mode"
+      onClick={cycle}
+      aria-label={`${LABEL[pref]} — click to change`}
+      title={LABEL[pref]}
       className="flex h-10 w-10 items-center justify-center rounded-full text-ink/70 hover:text-ink dark:text-cream/70 dark:hover:text-cream transition-colors"
     >
-      {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+      <Icon size={20} />
     </button>
   )
 }

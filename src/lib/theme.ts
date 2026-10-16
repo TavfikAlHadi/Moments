@@ -1,10 +1,24 @@
-export type Theme = 'light' | 'dark'
+export type ThemePref = 'system' | 'light' | 'dark'
 
-export function getTheme(): Theme {
-  return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+const media = matchMedia('(prefers-color-scheme: dark)')
+
+function apply(pref: ThemePref) {
+  const dark = pref === 'system' ? media.matches : pref === 'dark'
+  document.documentElement.classList.toggle('dark', dark)
 }
 
-export function setTheme(theme: Theme) {
-  document.documentElement.classList.toggle('dark', theme === 'dark')
-  localStorage.setItem('theme', theme)
+export function getThemePref(): ThemePref {
+  const stored = localStorage.getItem('theme')
+  return stored === 'light' || stored === 'dark' ? stored : 'system'
 }
+
+export function setThemePref(pref: ThemePref) {
+  if (pref === 'system') localStorage.removeItem('theme')
+  else localStorage.setItem('theme', pref)
+  apply(pref)
+}
+
+// Track OS changes live while the user is on "system".
+media.addEventListener('change', () => {
+  if (getThemePref() === 'system') apply('system')
+})

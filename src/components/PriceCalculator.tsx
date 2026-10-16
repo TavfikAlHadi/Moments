@@ -4,6 +4,7 @@ import { supabase, supabaseEnabled } from '../lib/supabase'
 
 const BASE_FEE = 15 // RM handling/shipping
 const NO_RESTORE_DISCOUNT = 0.25 // fraction off the package-tallied price when restoration is unchecked
+const USB_FEE = 50 // RM, USB flash drive OTG add-on — mirrors _lib.ts on the server
 
 // Piecewise-linear interpolation across actual pricing_tiers rows, so the
 // estimate tallies exactly with the package price at each tier's photo count
@@ -58,13 +59,14 @@ interface PriceCalculatorProps {
     name: string
     price: number
     notes?: string
-    custom?: { photos: number; restore: boolean }
+    custom?: { photos: number; restore: boolean; usb?: boolean }
   }) => void
 }
 
 export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
   const [photos, setPhotos] = useState(150)
   const [restore, setRestore] = useState(true)
+  const [usb, setUsb] = useState(false)
   const [TIERS, setTiers] = useState(FALLBACK_TIERS)
 
   useEffect(() => {
@@ -84,8 +86,8 @@ export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
   const estimate = useMemo(() => {
     const raw = interpolatePrice(photos, TIERS)
     const withDiscount = restore ? raw : raw * (1 - NO_RESTORE_DISCOUNT)
-    return Math.round(withDiscount * 100) / 100
-  }, [photos, restore, TIERS])
+    return Math.round((withDiscount + (usb ? USB_FEE : 0)) * 100) / 100
+  }, [photos, restore, usb, TIERS])
 
   const suggestedTier = useMemo(() => {
     return TIERS.find((t) => photos <= t.photos) ?? TIERS[TIERS.length - 1]
@@ -136,6 +138,19 @@ export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
               />
             </label>
 
+            <label className="flex items-center justify-between rounded-xl bg-cream/10 border border-cream/15 px-5 py-4 cursor-pointer backdrop-blur-md">
+              <span>
+                <span className="block font-medium">Add USB flash drive (OTG)</span>
+                <span className="block text-sm text-cream/50">Your files on a physical drive — RM{USB_FEE}</span>
+              </span>
+              <input
+                type="checkbox"
+                checked={usb}
+                onChange={(e) => setUsb(e.target.checked)}
+                className="h-5 w-5 accent-terracotta"
+              />
+            </label>
+
             <p className="text-xs text-cream/50">
               Estimate only — final pricing confirmed after we inspect your order.
               Closest package: <span className="text-gold font-semibold">{suggestedTier.name}</span>.
@@ -167,8 +182,8 @@ export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
                 onOrder({
                   name: 'Custom Estimate',
                   price: estimate,
-                  notes: `${photos} photos${restore ? ' with restoration' : ''}`,
-                  custom: { photos, restore },
+                  notes: `${photos} photos${restore ? ' with restoration' : ''}${usb ? ' + USB drive' : ''}`,
+                  custom: { photos, restore, usb },
                 })
               }
               className="mt-8 inline-flex items-center justify-center rounded-full bg-terracotta text-cream px-7 py-3.5 font-semibold hover:bg-terracotta-dark transition-colors w-full"

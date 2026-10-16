@@ -9,7 +9,7 @@ interface OrderFormProps {
     name: string
     price: number
     notes?: string
-    custom?: { photos: number; restore: boolean }
+    custom?: { photos: number; restore: boolean; usb?: boolean }
   } | null
   onClose: () => void
 }

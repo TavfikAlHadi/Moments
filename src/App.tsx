@@ -20,7 +20,7 @@ export default function App() {
     name: string
     price: number
     notes?: string
-    custom?: { photos: number; restore: boolean }
+    custom?: { photos: number; restore: boolean; usb?: boolean }
   } | null>(null)
 
   if (new URLSearchParams(window.location.search).has('session_id')) {

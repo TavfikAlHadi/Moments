@@ -29,6 +29,7 @@ export const COURIER_FEE: Record<'peninsular' | 'east_malaysia', number> = {
 
 const BASE_FEE = 15
 const NO_RESTORE_DISCOUNT = 0.25
+export const USB_FEE = 50 // RM, USB flash drive OTG add-on — mirrors PriceCalculator.tsx
 
 // Mirrors the piecewise-linear interpolation in PriceCalculator.tsx — anchors
 // the estimate to actual pricing_tiers rows so it tallies with the package

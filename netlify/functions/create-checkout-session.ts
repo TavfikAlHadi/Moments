@@ -1,5 +1,5 @@
 import type { Handler } from '@netlify/functions'
-import { getStripe, getSupabaseAdmin, COURIER_FEE, computeCustomEstimate } from './_lib'
+import { getStripe, getSupabaseAdmin, COURIER_FEE, USB_FEE, computeCustomEstimate } from './_lib'
 
 export const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -22,6 +22,9 @@ export const handler: Handler = async (event) => {
     }
     if (typeof custom.restore !== 'boolean') {
       return { statusCode: 400, body: JSON.stringify({ error: 'Invalid restoration flag' }) }
+    }
+    if (custom.usb !== undefined && typeof custom.usb !== 'boolean') {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Invalid USB flag' }) }
     }
   } else if (typeof tierName !== 'string' || tierName.trim() === '') {
     return { statusCode: 400, body: JSON.stringify({ error: 'Missing or invalid tier' }) }
@@ -77,7 +80,8 @@ export const handler: Handler = async (event) => {
 
   // Courier fee is always computed server-side — never trust a client-sent amount.
   const courierFee = fulfillment === 'courier' ? COURIER_FEE[region as 'peninsular' | 'east_malaysia'] : 0
-  const total = tierPrice + courierFee
+  const usbFee = isCustom && custom.usb === true ? USB_FEE : 0
+  const total = tierPrice + courierFee + usbFee
 
   const lineItems = [
     {
@@ -89,6 +93,16 @@ export const handler: Handler = async (event) => {
       quantity: 1,
     },
   ]
+  if (usbFee > 0) {
+    lineItems.push({
+      price_data: {
+        currency: 'myr',
+        product_data: { name: 'USB flash drive (OTG)' },
+        unit_amount: Math.round(usbFee * 100),
+      },
+      quantity: 1,
+    })
+  }
   if (courierFee > 0) {
     lineItems.push({
       price_data: {
@@ -119,7 +133,7 @@ export const handler: Handler = async (event) => {
   }
 
   const customNotes = isCustom
-    ? `Custom estimate: ${custom.photos} photos${custom.restore ? ' with restoration' : ''}`
+    ? `Custom estimate: ${custom.photos} photos${custom.restore ? ' with restoration' : ''}${usbFee ? ' + USB drive' : ''}`
     : null
 
   const { error: dbError } = await getSupabaseAdmin().from('orders').insert({
