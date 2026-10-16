@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react'
 const faqs = [
   {
     q: 'Will my photos be safe?',
-    a: 'Yes. Every item is barcoded and tracked from the moment it arrives, scanned by trained technicians, and returned to you along with your digital files. Physical originals are never discarded without your confirmation.',
+    a: 'Yes. Every item is tracked from the moment it arrives, scanned by trained technicians, and returned to you along with your digital files. Physical originals are never discarded without your confirmation.',
   },
   {
     q: 'What formats can you digitise?',

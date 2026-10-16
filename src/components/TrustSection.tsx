@@ -5,7 +5,7 @@ const points = [
   {
     icon: Fingerprint,
     title: 'Handled individually',
-    body: 'Every photo, negative and album is barcoded and tracked from the moment it arrives, so nothing gets mixed up or lost.',
+    body: 'Every photo, negative and album is tracked from the moment it arrives, so nothing gets mixed up or lost.',
   },
   {
     icon: ShieldCheck,
