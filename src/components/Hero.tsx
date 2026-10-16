@@ -38,7 +38,7 @@ export default function Hero() {
             </a>
           </div>
           <p className="mt-6 text-sm text-ink/50 dark:text-cream/50">
-            Kuala Lumpur, Malaysia · 3-week turnaround · Free 30-day cloud storage
+            3-week turnaround · Free 60-day cloud storage
           </p>
         </motion.div>
 
@@ -48,8 +48,8 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: 'easeOut', delay: 0.15 }}
         >
           <BeforeAfterSlider
-            beforeSrc="https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=900&q=60&sat=-100&sepia=60"
-            afterSrc="https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=900&q=80"
+            beforeSrc="/hero-before.webp"
+            afterSrc="/hero-after.jpg"
             beforeLabel="Before"
             afterLabel="After"
           />

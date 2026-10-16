@@ -15,12 +15,12 @@ const steps = [
   {
     icon: Wand2,
     title: 'Restoration & Enhancement',
-    body: 'We perform manual colour correction, damage repair, and AI-assisted enhancement on request.',
+    body: 'We provide basic colour correction, minor photo repairs, and AI-assisted enhancement upon request. Major restoration work may require an additional fee.',
   },
   {
     icon: CloudUpload,
     title: 'Digital Delivery',
-    body: 'Files arrive via a secure download link, backed up to Moments Cloud for 30 days, free.',
+    body: 'Files arrive via a secure download link, backed up to Moments Cloud for 60 days, free.',
   },
 ]
 

@@ -14,8 +14,8 @@ const points = [
   },
   {
     icon: Timer,
-    title: 'Files kept 30 days, then deleted',
-    body: 'Your digital files stay on Moments Cloud for 30 days for free re-downloads, then are removed from our servers.',
+    title: 'Files kept 60 days, then deleted',
+    body: 'Your digital files stay on Moments Cloud for 60 days for free re-downloads, then are removed from our servers.',
   },
   {
     icon: Lock,

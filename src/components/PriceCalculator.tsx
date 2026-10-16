@@ -126,7 +126,7 @@ export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
             <label className="flex items-center justify-between rounded-xl bg-cream/10 border border-cream/15 px-5 py-4 cursor-pointer backdrop-blur-md">
               <span>
                 <span className="block font-medium">Add restoration &amp; enhancement</span>
-                <span className="block text-sm text-cream/50">Colour correction, damage repair, AI touch-up</span>
+                <span className="block text-sm text-cream/50">Basic colour correction, minor repairs, AI touch-up</span>
               </span>
               <input
                 type="checkbox"
@@ -159,7 +159,7 @@ export default function PriceCalculator({ onOrder }: PriceCalculatorProps) {
               RM {estimate.toFixed(2)}
             </p>
             <p className="mt-2 text-sm text-ink/50">
-              includes handling, high-res scanning &amp; 30-day cloud backup
+              includes handling, high-res scanning &amp; 60-day cloud backup
             </p>
             <button
               type="button"

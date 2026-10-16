@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     q: 'How do I receive my digital files?',
-    a: 'Through a secure download link, plus 30 days of free storage on Moments Cloud so you can stream from any device.',
+    a: 'Through a secure download link, plus 60 days of free storage on Moments Cloud so you can stream from any device.',
   },
   {
     q: 'What if I have more than 400 photos?',
